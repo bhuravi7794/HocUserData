@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import {connect} from "react-redux";
 import ReactDOM from 'react-dom';
-
+import ReactTable from 'react-table-6'
 import { updateProduct, addProduct } from 'actions/products/';
 import { updateEdit } from 'actions/edit/';
+import 'react-table-6/react-table.css'
+
 
 class AddUser extends Component {
   constructor(props) {
@@ -23,9 +25,11 @@ class AddUser extends Component {
       doB,
       quali,
       mark,
-      userList
+      userList,
+  
     };
   };
+
 
 
 
@@ -44,11 +48,11 @@ class AddUser extends Component {
       alert('First Name and Last Name are required!');
     }else{
     var data={
-        firstName,
-        lastName,
-         doB:new Date().getFullYear()-date.getFullYear(),
-         quali,
-         mark
+        "first_name":firstName,
+        "last_name":lastName,
+         "age":Math.floor((new Date() - new Date(doB).getTime()) / 3.15576e+10),
+         "quli":quali,
+         "mark":mark
     }
     userList.push(data);
     this.setState({
@@ -64,18 +68,30 @@ class AddUser extends Component {
   };
 
   render() {
+    const columns = [{  
+      Header: 'First Name',  
+      accessor: 'first_name'  
+     },{  
+      Header: 'Last Name',  
+      accessor: 'last_name'  
+     },{  
+      Header: 'Age',  
+      accessor: 'age'  
+     },{  
+      Header: 'Qualification',  
+      accessor: 'quli'  
+     },{  
+      Header: 'Marks',  
+      accessor: 'mark'  
+     }
+    ]  
+  
       
     let { firstName, lastName, doB,quali,mark,userList} = this.state,
       { edit } = this.props;
       var listItem=userList.map((userList,k)=>
-        <li >
-            {k+1}
-          {userList.firstName}
-          {userList.lastName}
-          {userList.doB}
-          {userList.quali}
-          {userList.mark}
-        </li>   );
+      <span></span>
+       );
     return (
         <div>
       <form className={'row-group'}
@@ -152,6 +168,31 @@ class AddUser extends Component {
       {listItem}
       {!userList.length && <li className={'list-group-item font-weight-bold text-center'}>{'No Data!'}</li>}
     </ul>
+    <ReactTable  
+            data={userList}  
+            columns={columns}  
+            defaultPageSize = {2}  
+            pageSizeOptions = {[2,4, 6]}  
+        
+            getTrProps={(state, rowInfo, column)  => {
+
+              if(rowInfo!=undefined){
+              return {
+                style: {
+                  background: rowInfo.row.age > 30 ? 'green' : 'yellow'
+                }
+              }
+            }
+
+            else{
+              return {
+
+              }
+            }
+
+            }}
+
+         />  
     </div>
     );
   }
